@@ -1,0 +1,32 @@
+@import "~@site/variable.scss";
+@import "~@/styles/func.scss";
+
+.Loading {
+  &-content {
+    width: r16(56);
+    height: r16(56);
+    background-image: url('../../assets/loading.png');
+    background-size: 100% 100%;
+    animation: loading 1s linear infinite;
+  }
+
+  &-mask {
+    position: fixed;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,14 @@
+@import './func.scss';
+
+@mixin backgroundImage($src) {
+  background-image: url($src);
+  background-position: 0 center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+@mixin one_ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

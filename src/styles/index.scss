@@ -1,0 +1,11 @@
+/* priamry主题色替换,需在rui样式 */
+@import "base";
+@import "mixin";
+@import '~@site/variable.scss';
+
+/* yzt-rui style */
+
+@import "~yzt-rui/dist/yzt-rui.scss";
+
+/* swiper style */
+// @import '~swiper/dist/css/swiper.min.css';
