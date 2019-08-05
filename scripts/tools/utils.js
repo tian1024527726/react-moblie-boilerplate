@@ -11,31 +11,32 @@ const cssLoader = (cssModule = false, minimize = false) => {
   const res = {
     loader: 'css-loader',
     options: {
-      minimize,
       importLoaders: 1,
     },
   };
   if (cssModule) {
     res.options = {
       ...res.options,
-      modules: true,
-      localIdentName: '[path][name]__[local]--[hash:base64:5]',
-      getLocalIdent: (context, localIdentName, localName) => {
-        if (
-          context.resourcePath.includes('node_modules')
-        ) {
+      modules: {
+        mode: 'local',
+        localIdentName: '[path][name]__[local]--[hash:base64:5]',
+        getLocalIdent: (context, localIdentName, localName) => {
+          if (
+            context.resourcePath.includes('node_modules')
+          ) {
+            return localName;
+          }
+          const match = context.resourcePath.match(/src(.*)/);
+          if (match && match[1]) {
+            const reactAntdPath = match[1].replace('.scss', '').replace('.module', '');
+            const arr = slash(reactAntdPath)
+              .split('/')
+              .map(a => a.replace(/([A-Z])/g, '-$1'))
+              .map(a => a.toLowerCase());
+            return `react-template${arr.join('-')}-${localName}`.replace(/--/g, '-');
+          }
           return localName;
         }
-        const match = context.resourcePath.match(/src(.*)/);
-        if (match && match[1]) {
-          const reactAntdPath = match[1].replace('.scss', '').replace('.module', '');
-          const arr = slash(reactAntdPath)
-            .split('/')
-            .map(a => a.replace(/([A-Z])/g, '-$1'))
-            .map(a => a.toLowerCase());
-          return `react-template${arr.join('-')}-${localName}`.replace(/--/g, '-');
-        }
-        return localName;
       },
     };
   }

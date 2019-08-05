@@ -8,6 +8,7 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const config = require('../../config')
 const utils = require('../tools/utils')
 const dllConfig = config.dlls.dllPlugin.defaults;
@@ -20,22 +21,27 @@ const {
 } = utils.loadersConfig;
 
 // style files regexes
-const cssRegex = /\.css$/;
-const cssModuleRegex = /\.module\.css$/;
-const sassRegex = /\.(scss|sass)$/;
-const sassModuleRegex = /\.module\.(scss|sass)$/;
-const lessRegex = /\.less$/;
-const lessModuleRegex = /\.module\.less$/;
+const cssRegex = /\.css$/i;
+const cssModuleRegex = /\.module\.css$/i;
+const sassRegex = /\.(scss|sass)$/i;
+const sassModuleRegex = /\.module\.(scss|sass)$/i;
+const lessRegex = /\.less$/i;
+const lessModuleRegex = /\.module\.less$/i;
 const plugins = [
   new ManifestPlugin({
-		fileName: 'asset-manifest.json',
-	}),
+    fileName: 'asset-manifest.json',
+  }),
   new MiniCssExtractPlugin({
-		filename: 'stylesheet/[name].css?[chunkhash:8]',
+    filename: 'stylesheet/[name].css?[chunkhash:8]',
     chunkFilename: 'stylesheet/[name].css?[chunkhash:8]',
     disable: false,
     allChunks: true,
-	}),
+  }),
+  new OptimizeCssAssetsPlugin({
+    cssProcessor: require('cssnano'),
+    cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
+    canPrint: true
+  }),
   new HtmlWebpackPlugin({
     template: 'src/index.html',
     cache: false, // 防止各site项目一样时，不生成html文件
@@ -88,13 +94,13 @@ glob.sync(`${dllConfig.buildPath}` + '/*.dll.css').forEach((dllPath) => {
 });
 
 function recursiveIssuer(m) {
-	if (m.issuer) {
-		return recursiveIssuer(m.issuer);
-	} else if (m.name) {
-		return m.name;
-	} else {
-		return false;
-	}
+  if (m.issuer) {
+    return recursiveIssuer(m.issuer);
+  } else if (m.name) {
+    return m.name;
+  } else {
+    return false;
+  }
 }
 
 const clientWebpackConfig = merge(baseWebpackConfig, {
@@ -188,106 +194,106 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
         test: cssRegex,
         exclude: cssModuleRegex,
         use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							// you can specify a publicPath here
-							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
-						},
-					},
-					cssLoader(false,true),
-					postCssLoader,
-				],
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          cssLoader(false, true),
+          postCssLoader,
+        ],
       },
       {
         test: cssModuleRegex,
         use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							// you can specify a publicPath here
-							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
-						},
-					},
-					cssLoader(true,true),
-					postCssLoader,
-				],
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          cssLoader(true, true),
+          postCssLoader,
+        ],
       },
       {
         test: sassRegex,
         exclude: [/node_module/, sassModuleRegex],
         use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							// you can specify a publicPath here
-							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
-						},
-					},
-					cssLoader(false,true),
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          cssLoader(false, true),
           postCssLoader,
           sassLoader
-				]
+        ]
       },
       {
         test: sassModuleRegex,
         exclude: /node_module/,
         use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							// you can specify a publicPath here
-							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
-						},
-					},
-					cssLoader(true,true),
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          cssLoader(true, true),
           postCssLoader,
           sassLoader
-				]
+        ]
       },
       {
         test: lessRegex,
         exclude: [/node_module/, lessModuleRegex],
         use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							// you can specify a publicPath here
-							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
-						},
-					},
-					cssLoader(false,true),
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          cssLoader(false, true),
           postCssLoader,
           lessLoader
-				]
+        ]
       },
       {
         test: lessModuleRegex,
         exclude: /node_module/,
         use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							// you can specify a publicPath here
-							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
-						},
-					},
-					cssLoader(true,true),
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          cssLoader(true, true),
           postCssLoader,
           lessLoader
-				]
+        ]
       }
     ]
   },
