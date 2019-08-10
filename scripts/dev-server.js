@@ -7,7 +7,7 @@ const express = require('express');
 const ip = require('ip');
 const chalk = require('chalk');
 const webpack = require('webpack');
-const opn = require('opn');
+const open = require('open');
 const proxyMiddleware = require('http-proxy-middleware'); //代理模块
 const portfinder = require('portfinder')
 const chafMiddleware = require('connect-history-api-fallback')(); //api重定向模块，在使用history路由使用时，一直定向到index.html
@@ -31,7 +31,11 @@ const devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: config.paths.public,
   stats: {
     colors: true,
+    modules: false,
+    children: false,
     chunks: false,
+    chunkModules: false,
+    warnings: false
   },
 });
 
@@ -62,18 +66,6 @@ app.use(hotMiddleware);
 const localUri = `http://localhost:${port}`;
 const networkUri = `http://${ip.address()}:${port}`;
 
-devMiddleware.waitUntilValid(() => {
-  console.log(`
-App running at:
-  - Local:   ${chalk.cyan(localUri)} (copied to clipboard)
-  - Network: ${chalk.cyan(networkUri)}
-	`);
-  // 自动打开浏览器
-  if (config.dev.autoOpenBrowser) {
-    opn(localUri);
-  }
-});
-
 let _resolve
 const readyPromise = new Promise(resolve => {
   _resolve = resolve
@@ -93,6 +85,17 @@ module.exports = new Promise((resolve, reject) => {
       //   publicPath: webpackConfig.output.publicPath,
       //   quiet: true
       // })
+      devMiddleware.waitUntilValid(() => {
+        console.log(`
+App running at:
+  - Local:   ${chalk.cyan(localUri)} (copied to clipboard)
+  - Network: ${chalk.cyan(networkUri)}
+        `);
+        // 自动打开浏览器
+        if (config.dev.autoOpenBrowser) {
+          open(localUri);
+        }
+      });
       resolve({
         ready: readyPromise,
         close: () => {

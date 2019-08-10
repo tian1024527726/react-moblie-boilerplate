@@ -96,10 +96,6 @@ const clientWebpackConfig = {
       {
         test: /\.html$/,
         use: 'html-loader'
-      },
-      {
-        test: /\.json$/,
-        use: 'json-loader'
       }
     ]
   },

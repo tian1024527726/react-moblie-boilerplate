@@ -17,6 +17,7 @@ const {
   sassLoader,
   lessLoader,
   cssLoader,
+  px2remLoader
 } = utils.loadersConfig;
 
 // style files regexes
@@ -103,38 +104,38 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
     index: ['./scripts/tools/dev-client', './src/index.js']
   },
   output: {
-    chunkFilename: 'js/[name].chunk.js'
+    chunkFilename: '[name].chunk.js?[chunkhash]'
   },
   module: {
     rules: [
       {
         test: cssRegex,
         exclude: cssModuleRegex,
-        use: [styleLoader, cssLoader()]
+        use: [styleLoader, cssLoader(), px2remLoader]
       },
       {
         test: cssModuleRegex,
-        use: [styleLoader, cssLoader(true)]
+        use: [styleLoader, cssLoader(true), px2remLoader]
       },
       {
         test: sassRegex,
         exclude: [/node_module/, sassModuleRegex],
-        use: [styleLoader, cssLoader(), postCssLoader, sassLoader]
+        use: [styleLoader, cssLoader(), px2remLoader, postCssLoader, sassLoader]
       },
       {
         test: sassModuleRegex,
         exclude: /node_module/,
-        use: [styleLoader, cssLoader(true), postCssLoader, sassLoader]
+        use: [styleLoader, cssLoader(true), px2remLoader, postCssLoader, sassLoader]
       },
       {
         test: lessRegex,
         exclude: [/node_module/, lessModuleRegex],
-        use: [styleLoader, cssLoader(), postCssLoader, lessLoader]
+        use: [styleLoader, cssLoader(), px2remLoader, postCssLoader, lessLoader]
       },
       {
         test: lessModuleRegex,
         exclude: /node_module/,
-        use: [styleLoader, cssLoader(true), postCssLoader, lessLoader]
+        use: [styleLoader, cssLoader(true), px2remLoader, postCssLoader, lessLoader]
       }
     ]
   },

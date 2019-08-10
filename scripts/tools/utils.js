@@ -1,10 +1,7 @@
 const slash = require('slash2');
 
 const styleLoader = {
-  loader: 'style-loader',
-  options: {
-    hmr: false // 禁用style-loader的hot Module加载
-  }
+  loader: 'style-loader'
 }
 
 const cssLoader = (cssModule = false, minimize = false) => {
@@ -43,6 +40,14 @@ const cssLoader = (cssModule = false, minimize = false) => {
   return res;
 }
 
+const px2remLoader = {
+  loader: 'px2rem-loader',
+  options: {
+    remUnit: 16,
+    remPrecision: 8
+  }
+}
+
 const postCssLoader = {
   loader: 'postcss-loader',
 }
@@ -63,6 +68,7 @@ const lessLoader = {
 exports.loadersConfig = {
   styleLoader,
   cssLoader,
+  px2remLoader,
   postCssLoader,
   sassLoader,
   lessLoader,

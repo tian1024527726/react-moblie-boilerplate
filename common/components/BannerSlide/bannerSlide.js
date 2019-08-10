@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Swiper from 'swiper';
 
 class BannerSlide extends React.Component {
 
@@ -24,21 +23,23 @@ class BannerSlide extends React.Component {
       disableOnInteraction: true,
       disableOnInteraction: false
     } : autoplay;
-    this.bannerSwiper = new Swiper('.BannerSlide', {
-      loop: loopStatus,
-      observer: true,
-      observeParents: true,
-      pagination: {
-        el: '.swiper-pagination',
-      },
-      autoplay: autoplayStatus
-    })
-
-    this.bannerWrapper.addEventListener('click', (e) => {
-      const dataIndex = e.target.getAttribute('data-img-index');
-      /*通过代理事件,获取参数，执行click函数*/
-      dataList[dataIndex] && dataList[dataIndex].onClick && dataList[dataIndex].onClick();
-    })
+    import('swiper')
+      .then(Swiper => {
+        this.bannerSwiper = new Swiper('.BannerSlide', {
+          loop: loopStatus,
+          observer: true,
+          observeParents: true,
+          pagination: {
+            el: '.swiper-pagination',
+          },
+          autoplay: autoplayStatus
+        })
+        this.bannerWrapper.addEventListener('click', (e) => {
+          const dataIndex = e.target.getAttribute('data-img-index');
+          /*通过代理事件,获取参数，执行click函数*/
+          dataList[dataIndex] && dataList[dataIndex].onClick && dataList[dataIndex].onClick();
+        })
+      })
   }
   componentWillUnmount() { }
 

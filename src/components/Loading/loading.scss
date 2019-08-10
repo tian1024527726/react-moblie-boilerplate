@@ -1,10 +1,9 @@
 @import "~@site/variable.scss";
-@import "~@/styles/func.scss";
 
 .Loading {
   &-content {
-    width: r16(56);
-    height: r16(56);
+    width: 56px;
+    height: 56px;
     background-image: url('../../assets/loading.png');
     background-size: 100% 100%;
     animation: loading 1s linear infinite;

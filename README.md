@@ -1,8 +1,8 @@
-# react+yui-mobile+template
+# react+yui-mobile
 
-This is a Template for developing with React.js Production ready!
+This is a boilerplate for developing React Mobile Production !
 
-使用React.js开发的使用yui-mobileUI组件的移动端样板工程
+使用React开发的使用yui-mobileUI组件的移动端样板工程
 
 ------
 
@@ -10,7 +10,7 @@ This is a Template for developing with React.js Production ready!
 yarn install | npm install
 
 # notice
-如果使用npm安装，请使用淘宝镜像源，否则会安装失败
+如果使用npm安装，请使用淘宝镜像源，否则可能会安装失败
 设置淘宝镜像源，在终端中执行 npm confit set registry=https://registry.npm.taobao.org
 
 # build dll

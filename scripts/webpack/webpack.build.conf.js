@@ -18,6 +18,7 @@ const {
   sassLoader,
   lessLoader,
   cssLoader,
+  px2remLoader
 } = utils.loadersConfig;
 
 // style files regexes
@@ -32,8 +33,8 @@ const plugins = [
     fileName: 'asset-manifest.json',
   }),
   new MiniCssExtractPlugin({
-    filename: 'stylesheet/[name].css?[chunkhash:8]',
-    chunkFilename: 'stylesheet/[name].css?[chunkhash:8]',
+    filename: '[name].css?[contenthash:8]',
+    chunkFilename: '[name].css?[contenthash:8]',
     disable: false,
     allChunks: true,
   }),
@@ -80,18 +81,6 @@ glob.sync(`${dllConfig.buildPath}/reactDll*.dll.js`).forEach((dllPath) => {
     })
   );
 });
-glob.sync(`${dllConfig.buildPath}` + '/*.dll.css').forEach((dllPath) => {
-  plugins.push(
-    new AddAssetHtmlPlugin({
-      filepath: dllPath,
-      includeSourcemap: false,
-      publicPath: './stylesheet',
-      context: process.cwd(),
-      outputPath: 'stylesheet',
-      typeOfAsset: 'css'
-    })
-  );
-});
 
 function recursiveIssuer(m) {
   if (m.issuer) {
@@ -103,6 +92,16 @@ function recursiveIssuer(m) {
   }
 }
 
+const miniCssExtractPluginLoader = {
+  loader: MiniCssExtractPlugin.loader,
+  options: {
+    // you can specify a publicPath here
+    // by default it uses publicPath in webpackOptions.output
+    publicPath: '../',
+    hmr: process.env.NODE_ENV === 'development',
+  },
+}
+
 const clientWebpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   entry: {
@@ -110,8 +109,8 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
   },
   output: {
     publicPath: config.build.publicPath,
-    filename: 'js/[name].js?[chunkhash:8]',
-    chunkFilename: 'js/[name].chunk.js?[chunkhash:8]'
+    filename: '[name].js?[chunkhash:8]',
+    chunkFilename: '[name].chunk.js?[chunkhash:8]'
   },
   optimization: {
     minimizer: [
@@ -123,6 +122,8 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
           compress: {
             ecma: 5,
             warnings: false,
+            drop_debugger: true,
+            drop_console: true,
             // turn off flags with small gains to speed up minification
             arrows: false,
             collapse_vars: false, // 0.3kb
@@ -194,32 +195,18 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
         test: cssRegex,
         exclude: cssModuleRegex,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
-              publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
+          miniCssExtractPluginLoader,
           cssLoader(false, true),
+          px2remLoader,
           postCssLoader,
         ],
       },
       {
         test: cssModuleRegex,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
-              publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
+          miniCssExtractPluginLoader,
           cssLoader(true, true),
+          px2remLoader,
           postCssLoader,
         ],
       },
@@ -227,16 +214,9 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
         test: sassRegex,
         exclude: [/node_module/, sassModuleRegex],
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
-              publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
+          miniCssExtractPluginLoader,
           cssLoader(false, true),
+          px2remLoader,
           postCssLoader,
           sassLoader
         ]
@@ -245,16 +225,9 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
         test: sassModuleRegex,
         exclude: /node_module/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
-              publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
+          miniCssExtractPluginLoader,
           cssLoader(true, true),
+          px2remLoader,
           postCssLoader,
           sassLoader
         ]
@@ -263,16 +236,9 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
         test: lessRegex,
         exclude: [/node_module/, lessModuleRegex],
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
-              publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
+          miniCssExtractPluginLoader,
           cssLoader(false, true),
+          px2remLoader,
           postCssLoader,
           lessLoader
         ]
@@ -281,16 +247,9 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
         test: lessModuleRegex,
         exclude: /node_module/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
-              publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
+          miniCssExtractPluginLoader,
           cssLoader(true, true),
+          px2remLoader,
           postCssLoader,
           lessLoader
         ]
