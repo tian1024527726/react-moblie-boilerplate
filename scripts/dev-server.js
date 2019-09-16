@@ -4,21 +4,31 @@ require('babel-core/register')();
 
 // 导入模块
 const express = require('express');
+const { join } = require('path');
 const ip = require('ip');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const open = require('open');
 const proxyMiddleware = require('http-proxy-middleware'); //代理模块
 const portfinder = require('portfinder')
+const chokidar = require('chokidar');
 const chafMiddleware = require('connect-history-api-fallback')(); //api重定向模块，在使用history路由使用时，一直定向到index.html
 const webpackConfig = require('./webpack/webpack.dev.conf');
 const config = require('../config');
+const createRouter = require('./createRouter');
+
+
+// route.config.js文件位置
+const routePath = join(process.cwd(), 'buildConfig/route.config.js');
 
 // 设置端口
 const port = process.env.PORT || config.dev.port;
 const proxyTable = config.dev.proxyTable;
 
 const app = express();
+
+// 根据route.config.js,生成路由文件
+createRouter(routePath);
 
 
 const compiler = webpack(webpackConfig);
@@ -50,6 +60,26 @@ Object.keys(proxyTable).forEach(context => {
   }
   app.use(proxyMiddleware(options.filter || context, options));
 });
+
+// 监听route.config.js
+const watcher = chokidar.watch(routePath, {
+	ignoreInitial: true,
+	cwd: process.cwd(),
+})
+watcher
+	.on('change', path => {
+		Object.keys(require.cache).forEach(file => {
+			if (file.indexOf(join(process.cwd(), path)) === 0) {
+				delete require.cache[file];
+			}
+		});
+
+		try {
+			createRouter(join(process.cwd(), path));
+		} catch (e) {
+			console.log('出错了！！')
+		}
+	})
 
 //设置开发环境
 app.env = 'development';

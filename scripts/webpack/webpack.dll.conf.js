@@ -40,6 +40,7 @@ if (isDev) {
 module.exports = merge(baseWebpackConfig, {
   context: process.cwd(), // 上下文
   entry: dllEntry(), // 文件入口
+  mode: isDev ? 'development' : 'production',
   // 打包文件输出
   output: {
     filename: `[name]_${dllVersion}.dll.js`,

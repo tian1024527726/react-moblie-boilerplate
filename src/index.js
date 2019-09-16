@@ -13,12 +13,8 @@ const store = configureStore(history);
 const rootElement = document.getElementById('app');
 
 const render = () => {
-  const App = require('./app');
-  ReactDOM.render(
-    // 利用Provider可以使我们的 store 能为下面的组件所用
-    <App store={store} history={history} />,
-    rootElement
-  );
+	const App = require('./router').default;
+	ReactDOM.render(<App store={store} history={history} />, rootElement);
 }
 
 if (process.env.NODE_ENV === 'development') {

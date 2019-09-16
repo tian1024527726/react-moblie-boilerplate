@@ -46,14 +46,13 @@ const getRedux = context => {
   const obj = {};
   context.keys().forEach(item => {
     const moduleName = formatModuleName(item);
-    obj[moduleName] = context(item);
+    obj[moduleName] = context(item).default;
   });
   return obj;
 };
 
 const pageActions = getRedux(actionsContext);
 const pageReducer = getRedux(reducerContext);
-
 
 // 将actions 加入自动导入对象
 export const allActions = {
@@ -62,11 +61,11 @@ export const allActions = {
 };
 
 // 将reducer 加入自动注入对象
-export const allReducer = {
+export const allReducers = {
   appStore,
   ...pageReducer,
 };
 
 
 
-export default allReducer;
+export default allReducers;

@@ -1,5 +1,4 @@
-import createHashHistory from 'history/lib/createHashHistory';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+import { createHashHistory, createBrowserHistory } from 'history';
 
 let history = null;
 if (process.env.ROUTE_MODE === 'hash') {
@@ -10,4 +9,5 @@ if (process.env.ROUTE_MODE === 'hash') {
 	history = createHashHistory();
 }
 
+window.g_history = history;
 module.exports = history;
